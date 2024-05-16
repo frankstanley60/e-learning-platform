@@ -1,0 +1,16 @@
+<!-- studentresponse_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Response List</title>
+</head>
+<body>
+    <h1>Student Response List</h1>
+    <ul>
+        {% for studentresponse in studentresponses %}
+            <li>{{ studentresponse }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

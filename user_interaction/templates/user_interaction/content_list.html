@@ -1,0 +1,19 @@
+<!-- content_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Content List</title>
+</head>
+<body>
+    <h1>Content List</h1>
+    <ul>
+        {% for content in contents %}
+            <li><h3>subject:</h3> {{ content.subject }}</li>
+            <li><h3>kind:</h3> {{ content.kind }}</li>
+            <li><h3>difficulty:</h3> {{ content.difficulty }}</li>
+            <li><h3>pretty content name:</h3> {{content.content_pretty_name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

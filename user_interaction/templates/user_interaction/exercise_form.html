@@ -1,0 +1,16 @@
+<!-- exercise_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if exercise %}Edit Exercise{% else %}Create Exercise{% endif %}</title>
+</head>
+<body>
+    <h1>{% if exercise %}Edit Exercise{% else %}Create Exercise{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

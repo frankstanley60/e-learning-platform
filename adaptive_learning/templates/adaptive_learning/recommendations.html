@@ -1,0 +1,20 @@
+<!-- lesson_edit.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>recommendations</title>
+</head>
+<body>
+    <!-- recommendations.html -->
+
+<h2>Recommended Learning Items</h2>
+<ul>
+  {% for item in recommended_items %}
+    <li>{{ item.question }}</li>
+  {% endfor %}
+</ul>
+
+    
+</body>
+</html>
