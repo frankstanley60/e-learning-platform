@@ -63,6 +63,7 @@ class StudentResponse(models.Model):
     total_sec_taken = models.IntegerField(default=1)
     total_attempt_cnt = models.IntegerField(default=1)
     used_hint_cnt = models.IntegerField(default=1)
+    completed = models.BooleanField(default=False)
 
     def compare_with_correct_choice(self):
         """
@@ -77,3 +78,23 @@ class StudentResponse(models.Model):
 
         # Save the updated instance
         self.save()
+
+    def check_exercise_completion(self):
+        """
+        Check if the associated exercise is completed based on the student's responses.
+        """
+        answered_questions_count = StudentResponse.objects.filter(student=self.student, exercise=self.exercise).count()
+        total_questions_count = self.exercise.question_set.count()
+        if answered_questions_count == total_questions_count:
+           self.exercise.completed = True
+           self.exercise.save()
+        
+
+    def save(self, *args, **kwargs):
+        """
+        Override the save method to automatically check exercise completion
+        when a new StudentResponse is created.
+        """
+        super().save(*args, **kwargs)
+        # Check exercise completion
+        self.check_exercise_completion()    
