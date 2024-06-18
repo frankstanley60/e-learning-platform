@@ -76,6 +76,7 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, 'content_management', 'templates', 'content_management'),
                  os.path.join(BASE_DIR, 'adaptive_learning', 'templates', 'adaptive_learning'),  # Add adaptive_learning app templates
                  os.path.join(BASE_DIR, 'user_interaction', 'templates', 'user_interaction'),
+                 os.path.join(BASE_DIR, 'users', 'templates', 'users'),
                 ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -98,7 +99,7 @@ WSGI_APPLICATION = 'e_learning_platform.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'e_learning_platform',
+        'NAME': 'e-learn-2',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',  # Since XAMPP runs MySQL locally
