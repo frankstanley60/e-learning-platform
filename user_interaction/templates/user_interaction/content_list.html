@@ -1,19 +1,61 @@
-<!-- content_list.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Content List</title>
+    <title>Next Learning Item</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        li h3 {
+            display: inline;
+            font-size: 1.1em;
+            color: #555;
+        }
+        .no-content {
+            text-align: center;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
-    <h1>Content List</h1>
-    <ul>
-        {% for content in contents %}
-            <li><h3>subject:</h3> {{ content.subject }}</li>
-            <li><h3>kind:</h3> {{ content.kind }}</li>
-            <li><h3>difficulty:</h3> {{ content.difficulty }}</li>
-            <li><h3>pretty content name:</h3> {{content.content_pretty_name }}</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h1>Next Learning Item</h1>
+        <ul>
+            {% if contents %}
+                {% with content=contents.0 %}
+                    <li><h3>Subject:</h3> {{ content.subject }}</li>
+                    <li><h3>Kind:</h3> {{ content.kind }}</li>
+                    <li><h3>Difficulty:</h3> {{ content.difficulty }}</li>
+                    <li><h3>Pretty Content Name:</h3> {{ content.content_pretty_name }}</li>
+                    <li>{{ content.question }}</li>
+                {% endwith %}
+            {% else %}
+                <p class="no-content">No content available.</p>
+            {% endif %}
+        </ul>
+    </div>
 </body>
 </html>
