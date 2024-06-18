@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Lesson
 from .forms import LessonCreateForm, LessonEditForm
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 #@login_required
 def create_lesson(request):
@@ -52,6 +53,8 @@ def delete_lesson(request, lesson_id):
 def list_lessons(request):
     lessons = Lesson.objects.all()
     return render(request, 'lesson_list.html', {'lessons': lessons})
+
+    
 
 # views.py
 

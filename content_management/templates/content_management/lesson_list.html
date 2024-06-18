@@ -1,16 +1,60 @@
-<!-- lesson_list.html lesson_id=lesson.id -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lesson List</title>
+    <title>Recommended Lessons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .no-lessons {
+            text-align: center;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
-    <h1>Lesson List</h1>
-    <ul>
-        {% for lesson in lessons %}
-        <li><a href="{% url 'content_management:lesson_detail' lesson.id %}">{{ lesson.title }}</a></li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h1>Recommended Lessons</h1>
+        <ul>
+            {% if lessons %}
+                {% for lesson in lessons %}
+                    <li><a href="{% url 'content_management:lesson_detail' lesson.id %}">{{ lesson.title }}</a></li>
+                {% endfor %}
+            {% else %}
+                <p class="no-lessons">No lessons available.</p>
+            {% endif %}
+        </ul>
+    </div>
 </body>
 </html>
