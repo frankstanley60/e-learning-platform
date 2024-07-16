@@ -31,3 +31,4 @@ class ChoiceForm(forms.ModelForm):
     class Meta:
         model = Choice
         fields = ['question', 'text', 'is_correct']
+        
