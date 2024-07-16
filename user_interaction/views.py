@@ -186,3 +186,10 @@ def choice_delete(request, pk):
         return redirect('choice_list')
     return render(request, 'choice_confirm_delete.html', {'choice': choice})
 
+from django.shortcuts import render, get_object_or_404
+from .models import Exercise, Question
+
+def exercise_questions(request, exercise_id):
+    exercise = get_object_or_404(Exercise, ucid=exercise_id)
+    questions = Question.objects.filter(exercise=exercise)
+    return render(request, 'exercise_questions.html', {'exercise': exercise, 'questions': questions})

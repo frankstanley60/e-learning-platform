@@ -7,6 +7,9 @@ from .forms import UserRegistrationForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile
 from user_interaction.models import Student
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -34,7 +37,7 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
-            return redirect('/')  # Redirect to home page after login
+            return redirect(reverse('exercise_list'))  # Redirect to home page after login
     else:
         form = AuthenticationForm()
     return render(request, 'users/login_form.html', {'login_form':form})
@@ -61,3 +64,11 @@ def profile_view(request):
     # Pass the user_profile data to the template
     return render(request, 'users/profile.html', {'user_profile': user_profile})
     
+@login_required
+def home(request):
+    if request.user.is_author:
+        return render(request, 'author_home.html')
+    else:
+        return render(request, 'user_home.html')
+
+

@@ -10,7 +10,7 @@ class StudentForm(forms.ModelForm):
 class ExerciseForm(forms.ModelForm):
     class Meta:
         model = Exercise
-        fields = ['ucid', 'content_pretty_name', 'content_kind', 'difficulty', 'subject', 'learning_stage', 'level1_id', 'level2_id', 'level3_id', 'level4_id']
+        fields = ['ucid', 'content_pretty_name', 'content_kind', 'difficulty', 'subject', 'content', 'learning_stage', 'level1_id', 'level2_id', 'level3_id', 'level4_id']
 
 class ContentForm(forms.ModelForm):
     class Meta:
@@ -20,7 +20,7 @@ class ContentForm(forms.ModelForm):
 class StudentResponseForm(forms.ModelForm):
     class Meta:
         model = StudentResponse
-        fields = ['student', 'exercise', 'timestamp_TW', 'ucid', 'upid', 'problem_number', 'exercise_problem_re', 'is_correct', 'total_sec_taken', 'total_attempt_cnt', 'used_hint_cnt']
+        fields = ['student', 'exercise', 'timestamp_TW', 'ucid', 'upid', 'problem_number', 'exercise_problem_repeat_session', 'is_correct', 'total_sec_taken', 'total_attempt_cnt', 'used_hint_cnt']
 
 class QuestionForm(forms.ModelForm):
     class Meta:

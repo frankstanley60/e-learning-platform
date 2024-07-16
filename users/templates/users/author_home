@@ -1,0 +1,16 @@
+<!-- content_form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if content %}Edit Content{% else %}Create Content{% endif %}</title>
+</head>
+<body>
+    <h1>{% if content %}Edit Content{% else %}Create Content{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

@@ -76,6 +76,7 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR, 'content_management', 'templates', 'content_management'),
                  os.path.join(BASE_DIR, 'adaptive_learning', 'templates', 'adaptive_learning'),  # Add adaptive_learning app templates
                  os.path.join(BASE_DIR, 'user_interaction', 'templates', 'user_interaction'),
+                 os.path.join(BASE_DIR, 'users', 'templates', 'users'),
                 ],
         'APP_DIRS': True,
         'OPTIONS': {

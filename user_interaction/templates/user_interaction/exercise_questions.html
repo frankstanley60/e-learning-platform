@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ exercise.content_pretty_name }} - Questions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f9f9f9;
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        form {
+            margin-top: 10px;
+        }
+        label {
+            margin-left: 10px;
+        }
+        button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #007BFF;
+            color: white;
+            border-top: 1px solid #ddd;
+        }
+        .footer ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .footer li {
+            display: inline;
+            margin: 0 15px;
+        }
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .footer a:hover {
+            color: #ffdd57;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Questions for {{ exercise.content_pretty_name }}</h1>
+        <ul>
+            {% for question in questions %}
+                <li>
+                    <p>{{ question.text }}</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="question_id" value="{{ question.id }}">
+                        {% for choice in question.choice_set.all %}
+                            <input type="radio" id="choice{{ choice.id }}" name="choice" value="{{ choice.id }}">
+                            <label for="choice{{ choice.id }}">{{ choice.text }}</label><br>
+                        {% endfor %}
+                        <button type="submit">Submit Answer</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="footer">
+            <ul>
+                <li><a href="{% url 'exercise_list' %}">Back to Exercise List</a></li>
+                <li><a href="{% url 'recommendations' %}">Recommendations</a></li>
+                <li><a href="{% url 'adaptive_learning' %}">Next Learning Concept</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
