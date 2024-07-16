@@ -25,12 +25,24 @@
             list-style-type: none;
             padding: 0;
         }
+<<<<<<< HEAD
         li {
+=======
+        .question {
+>>>>>>> 47786ee06f922c2829814967e6b0ca47cee01808
             background-color: #f9f9f9;
             margin: 20px 0;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
+<<<<<<< HEAD
+=======
+            opacity: 0.1;
+            transition: opacity 0.3s;
+        }
+        .question:hover {
+            opacity: 1;
+>>>>>>> 47786ee06f922c2829814967e6b0ca47cee01808
         }
         form {
             margin-top: 10px;
@@ -78,22 +90,55 @@
             color: #ffdd57;
         }
     </style>
+    <script>
+        function startHover(questionId) {
+            const enterTimeField = document.getElementById('enter-time-' + questionId);
+            const enterTime = new Date().getTime(); // Get the current time in milliseconds
+            enterTimeField.value = enterTime; // Store the enter time in a hidden field
+        }
+    
+        function endHover(questionId) {
+            const enterTimeField = document.getElementById('enter-time-' + questionId);
+            const totalTimeField = document.getElementById('total-time-' + questionId);
+            const enterTime = parseInt(enterTimeField.value); // Get the enter time from the hidden field
+            const currentTime = new Date().getTime(); // Get the current time in milliseconds
+            const totalTime = parseInt(totalTimeField.value) + (currentTime - enterTime); // Calculate the total time
+            totalTimeField.value = totalTime; // Store the total time in a hidden field
+        }
+    
+        function setStartTime(questionId) {
+            const startTimeField = document.getElementById('start-time-' + questionId);
+            if (!startTimeField.value) {
+                startTimeField.value = new Date().toISOString(); // Set the start time if not already set
+            }
+        }
+    
+        function submitForm(questionId) {
+            const form = document.getElementById('form-' + questionId);
+            form.submit(); // Submit the form
+        }
+    </script>
+    
 </head>
 <body>
     <div class="container">
         <h1>Questions for {{ exercise.content_pretty_name }}</h1>
-        <ul>
+        <ul id="question-list">
             {% for question in questions %}
-                <li>
+                <li class="question" onmouseenter="startHover('{{ question.id }}')" onmouseleave="endHover('{{ question.id }}')">
                     <p>{{ question.text }}</p>
-                    <form method="post">
+                    <form id="form-{{ question.id }}" action="{% url 'submit_answer' question.id %}" method="post" onfocus="setStartTime('{{ question.id }}')">
                         {% csrf_token %}
+                        <input type="hidden" id="start-time-{{ question.id }}" name="start_time">
+                        <input type="hidden" id="enter-time-{{ question.id }}">
+                        <input type="hidden" id="total-time-{{ question.id }}" name="total_time_taken" value="0">
                         <input type="hidden" name="question_id" value="{{ question.id }}">
                         {% for choice in question.choice_set.all %}
                             <input type="radio" id="choice{{ choice.id }}" name="choice" value="{{ choice.id }}">
                             <label for="choice{{ choice.id }}">{{ choice.text }}</label><br>
                         {% endfor %}
-                        <button type="submit">Submit Answer</button>
+                        {{user_ability}}
+                        <button type="button" onclick="submitForm('{{ question.id }}')">Submit Answer</button>
                     </form>
                 </li>
             {% endfor %}

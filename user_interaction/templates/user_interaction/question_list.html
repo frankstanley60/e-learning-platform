@@ -4,72 +4,46 @@
     <meta charset="UTF-8">
     <title>Question List</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+        /* Your existing styles */
+
+        /* Dimmed style for questions */
+        .dimmed {
+            opacity: 0.5;
+            pointer-events: none;
         }
-        .container {
-            width: 80%;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            background-color: #f9f9f9;
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        form {
-            margin-top: 10px;
-        }
-        label {
-            margin-left: 10px;
-        }
-        button {
-            display: block;
-            margin: 10px 0;
-            padding: 10px 15px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #888;
+
+        /* Fully visible style for focused questions */
+        .focused {
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
+    <script>
+        function setStartTime(questionId) {
+            const startTimeField = document.getElementById('start-time-' + questionId);
+            if (!startTimeField.value) {
+                startTimeField.value = new Date().toISOString();
+            }
+        }
+
+        function focusQuestion(questionId) {
+            const questionElement = document.getElementById('question-' + questionId);
+            questionElement.classList.remove('dimmed');
+            questionElement.classList.add('focused');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Question List</h1>
         <ul>
             {% for question in questions %}
-                <li>
+                <li id="question-{{ question.id }}" class="dimmed">
                     <p>{{ question.text }}</p>
-                    <form method="post">
+                    <form method="post" onfocus="setStartTime('{{ question.id }}'); focusQuestion('{{ question.id }}');">
                         {% csrf_token %}
                         <input type="hidden" name="question_id" value="{{ question.id }}">
+                        <input type="hidden" id="start-time-{{ question.id }}" name="start_time">
                         {% for choice in question.choice_set.all %}
                             <input type="radio" id="choice{{ choice.id }}" name="choice" value="{{ choice.id }}">
                             <label for="choice{{ choice.id }}">{{ choice.text }}</label><br>

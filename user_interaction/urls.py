@@ -4,6 +4,7 @@ from .views import ContentListView, ContentCreateView, ContentUpdateView, Conten
 from .views import StudentResponseListView
 from .views import StudentListView, StudentCreateView, StudentUpdateView, StudentDeleteView
 from . import views
+from django.urls import re_path
 
 
 
@@ -30,8 +31,15 @@ urlpatterns = [
     path('choices/create/', views.choice_create, name='choice_create'),
     path('choices/<int:pk>/update/', views.choice_update, name='choice_update'),
     path('choices/<int:pk>/delete/', views.choice_delete, name='choice_delete'),
+<<<<<<< HEAD
     path('exercise/<str:exercise_id>/questions/', views.exercise_questions, name='exercise_questions'),
 
 
+=======
+    #path('exercise/<str:exercise_id>/questions/', views.exercise_questions, name='exercise_questions'),
+    re_path(r'^exercise/(?P<exercise_id>.+)/questions/$', views.exercise_questions, name='exercise_questions'),
+    path('submit_answer/<uuid:question_id>/', views.submit_answer, name='submit_answer'),
+    path('user_ability/', views.estimate_user_ability, name='estimate_user_ability'),
+>>>>>>> 47786ee06f922c2829814967e6b0ca47cee01808
 
 ]

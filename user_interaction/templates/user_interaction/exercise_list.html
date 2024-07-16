@@ -26,43 +26,63 @@
             padding: 0;
         }
         li {
-            background-color: #f9f9f9;
-            margin: 10px 0;
+            margin: 20px 0;
             padding: 15px;
+            background-color: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 5px;
-            transition: background-color 0.3s;
         }
-        li:hover {
-            background-color: #f0f0f0;
-        }
-        a {
-            text-decoration: none;
-            color: #007BFF;
-            font-weight: bold;
-            display: block;
-        }
-        a:hover {
-            text-decoration: underline;
+        .recommended {
+            background-color: #e0ffe0;
+            border-color: #b2ffb2;
         }
         .footer {
             text-align: center;
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #888;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #007BFF;
+            color: white;
+            border-top: 1px solid #ddd;
+        }
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .footer a:hover {
+            color: #ffdd57;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        
         <h1>Exercise List</h1>
+        {{user_ability}}
+        
+        <h2>Recommended Exercises</h2>
+        <ul>
+            {% for exercise in recommended_exercises %}
+                <li class="recommended">
+                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.content_pretty_name }}</a>
+                </li>
+            {% empty %}
+                <li>No recommended exercises available</li>
+            {% endfor %}
+        </ul>
+
+        <h2>All Exercises</h2>
         <ul>
             {% for exercise in exercises %}
                 <li>
-                    <a href="{% url 'exercise_questions' exercise.ucid %}">{{ exercise.content_pretty_name }}</a>
+                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.content_pretty_name }}</a>
+                
+                    {{user_ability}}
                 </li>
             {% endfor %}
         </ul>
+        
         <div class="footer">
             <a href="{% url 'home' %}">Back to Home</a>
         </div>

@@ -9,7 +9,6 @@ from .models import UserProfile
 from user_interaction.models import Student
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
 
 
 
@@ -26,7 +25,7 @@ def register_view(request):
             
             login(request, user)
             print("User profile created and associated with user:",profile)
-            return redirect('/')  # Redirect to home page after registration
+            return redirect(reverse('home'))  # Redirect to home page after registration
     else:
         form = UserRegistrationForm()
         profile_form = UserProfileForm()
@@ -64,11 +63,5 @@ def profile_view(request):
     # Pass the user_profile data to the template
     return render(request, 'users/profile.html', {'user_profile': user_profile})
     
-@login_required
 def home(request):
-    if request.user.is_author:
-        return render(request, 'author_home.html')
-    else:
-        return render(request, 'user_home.html')
-
-
+    return render(request, 'home.html')

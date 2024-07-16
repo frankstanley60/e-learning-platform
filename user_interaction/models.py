@@ -18,7 +18,6 @@ class Student(models.Model):
     has_teacher_cnt = models.IntegerField(default=1)
     is_self_coach = models.BooleanField(default=False)
     has_student_cnt = models.IntegerField(default=1)
-    ability = models.FloatField(default=0)
 
 class Content(models.Model):
     ucid = models.CharField(max_length=100, primary_key=True)
@@ -39,7 +38,7 @@ class Content(models.Model):
         return self.content_pretty_name
 
 class Exercise(models.Model):
-    ucid = models.CharField(primary_key=True, default=1, editable=True, max_length=100)
+    ucid = models.CharField(primary_key=True, default=1, editable=False, max_length=100)
     content_pretty_name = models.CharField(max_length=100)
     content_kind = models.CharField(max_length=100)
     difficulty = models.CharField(max_length=20, choices=[('Easy', 'Easy'), ('Normal', 'Normal'), ('Hard', 'Hard'), ('Unset', 'Unset')])
@@ -80,7 +79,7 @@ class StudentResponse(models.Model):
     choice = models.ForeignKey('Choice', on_delete=models.CASCADE)
     timestamp_TW = models.DateTimeField(default=timezone.now)
     ucid = models.ForeignKey(Content, on_delete=models.CASCADE, null=True) 
-    upid = models.UUIDField(default=uuid.uuid4, editable=True)
+    upid = models.UUIDField(default=uuid.uuid4, editable=False)
     problem_number = models.IntegerField(default=1)
     exercise_problem_repeat_session = models.IntegerField(default=1)  # New field added
     is_correct = models.BooleanField(default=False)
