@@ -35,5 +35,10 @@ urlpatterns = [
     re_path(r'^exercise/(?P<exercise_id>.+)/questions/$', views.exercise_questions, name='exercise_questions'),
     path('submit_answer/<uuid:question_id>/', views.submit_answer, name='submit_answer'),
     path('user_ability/', views.estimate_user_ability, name='estimate_user_ability'),
+    re_path(r'^exercise/(?P<exercise_id>.+)/answers$', views.show_answers, name='show_answers'),
+    #path('exercise/<int:exercise_id>/answers/', views.show_answers, name='show_answers'),
+    #path('interaction/exercise/<uuid:exercise_id>/answers/', views.show_answers, name='show_answers'),
+    
 
+    
 ]

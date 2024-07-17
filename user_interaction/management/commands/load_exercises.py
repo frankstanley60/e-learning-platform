@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Load the CSV file
-        my_items = pd.read_csv('c:\\Users\\frank\\Downloads\\my_items.csv')
+        my_items = pd.read_csv('C:\\Users\\frank\\Documents\\FYP_Item_parameters\\my_items.csv')
 
         # Print the column names to verify
         print("Column names:", my_items.columns)
@@ -52,7 +52,7 @@ class Command(BaseCommand):
             my_items.at[index, 'difficulty'] = map_difficulty(row['difficulty'])
 
         # Save the modified DataFrame back to the CSV file
-        my_items.to_csv('c:\\Users\\frank\\Downloads\\my_items.csv', index=False)
+        my_items.to_csv('C:\\Users\\frank\\Documents\\FYP_Item_parameters\\my_items.csv', index=False)
 
         # Iterate over the modified DataFrame to create or update Exercise and ExerciseParameters objects
         for index, row in my_items.iterrows():

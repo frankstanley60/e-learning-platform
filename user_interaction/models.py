@@ -5,6 +5,8 @@ from django.utils import timezone
 import pandas as pd
 from django.db import migrations, transaction
 from django.db.models import F
+from django.urls import reverse
+
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -18,6 +20,7 @@ class Student(models.Model):
     has_teacher_cnt = models.IntegerField(default=1)
     is_self_coach = models.BooleanField(default=False)
     has_student_cnt = models.IntegerField(default=1)
+    ability = models.FloatField(default=0)
 
 class Content(models.Model):
     ucid = models.CharField(max_length=100, primary_key=True)
@@ -52,6 +55,7 @@ class Exercise(models.Model):
     level2_id = models.CharField(max_length=100)
     level3_id = models.CharField(max_length=100)
     level4_id = models.CharField(max_length=100)
+    translated_content_pretty_name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.content_pretty_name
@@ -104,6 +108,11 @@ class StudentResponse(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.check_exercise_completion()
+
+        # Redirect to the answers page after completing the exercise
+        if StudentExerciseCompletion.objects.filter(student=self.student, exercise=self.exercise, completed=True).exists():
+            return reverse('show_answers', kwargs={'exercise_id': self.exercise.ucid})
+        
 
 class StudentExerciseCompletion(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

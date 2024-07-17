@@ -58,25 +58,25 @@
 <body>
     <div class="container">
         
-        <h1>Exercise List</h1>
+        <h1>Content</h1>
         {{user_ability}}
         
-        <h2>Recommended Exercises</h2>
+        <h2>Recommended path</h2>
         <ul>
             {% for exercise in recommended_exercises %}
                 <li class="recommended">
-                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.content_pretty_name }}</a>
+                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.content_pretty_name_translated }}</a>
                 </li>
             {% empty %}
-                <li>No recommended exercises available</li>
+                <li>No recommended contents available</li>
             {% endfor %}
         </ul>
 
-        <h2>All Exercises</h2>
+        <h2>All contents</h2>
         <ul>
             {% for exercise in exercises %}
                 <li>
-                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.content_pretty_name }}</a>
+                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.translated_content_pretty_name }}</a>
                 
                     {{user_ability}}
                 </li>
@@ -84,7 +84,7 @@
         </ul>
         
         <div class="footer">
-            <a href="{% url 'home' %}">Back to Home</a>
+            <a href="{% url 'home' %}">Back to exercises</a>
         </div>
     </div>
 </body>

@@ -9,6 +9,7 @@ import pytz
 from django.utils import timezone
 from django.http import HttpResponse
 import urllib.parse
+from googletrans import Translator
 
 
 
@@ -183,7 +184,8 @@ def submit_answer(request, question_id):
             )
             logger.debug(f"StudentResponse created: {student_response}")
 
-        return HttpResponse("Answer submitted")
+        #return HttpResponse("Answer submitted")
+        return redirect('show_answers', exercise_id=exercise.ucid)
 
     return HttpResponse("Invalid request")
 def question_create(request):
@@ -279,8 +281,15 @@ from django.shortcuts import render
 from math import exp
 from user_interaction.models import StudentResponse, ExerciseParameters  # Import your Django models
 
+from math import log
+from django.db.models import Avg
+
 def estimate_user_ability(student):
     user_responses = StudentResponse.objects.filter(student=student)
+    
+    if not user_responses.exists():
+        return 0
+
     total_ability = 0
     total_responses = 0
     
@@ -289,59 +298,189 @@ def estimate_user_ability(student):
             item_parameters = ExerciseParameters.objects.get(exercise=response.exercise)
         except ExerciseParameters.DoesNotExist:
             continue
+
+        # Parameters from the 3PL model
+        a = item_parameters.discrimination
+        b = item_parameters.difficulty
+        c = item_parameters.guessing
         
-        # Example logic for ability calculation
-        probability_correct = item_parameters.discrimination * (student.user_grade * item_parameters.difficulty - item_parameters.guessing) / (1 - item_parameters.guessing)
-        probability_correct = 1 / (1 + exp(-probability_correct))
+        # Calculate the probability of a correct response
+        theta = student.ability  # Initial estimate, you might need to update this iteratively
+        P_correct = c + (1 - c) / (1 + exp(-a * (theta - b)))
+
+        # Adjust user ability based on the response
+        if response.is_correct:
+            if 0 < P_correct < 1:  # Ensure P_correct is within valid range for log()
+                total_ability += log(P_correct)
+            else:
+                # Handle cases where P_correct is outside the valid range for log()
+                continue
+        else:
+            if 0 < (1 - P_correct) < 1:  # Ensure 1 - P_correct is within valid range for log()
+                total_ability += log(1 - P_correct)
+            else:
+                # Handle cases where 1 - P_correct is outside the valid range for log()
+                continue
         
-        total_ability += probability_correct
         total_responses += 1
     
     if total_responses > 0:
         average_ability = total_ability / total_responses
     else:
         average_ability = 0
-    average_ability = 20
+    
     return average_ability
 
-    
-
-# Example usage:
-# user = User.objects.get(pk=1)  # Assuming user is retrieved somehow
-# user_ability = estimate_user_ability(user)
-#from myapp.models import Exercise, ItemParameter  # Import your Django models
+# Update the student's ability attribute (assuming the Student model has an ability field)
+def update_student_ability(student):
+    student.ability = estimate_user_ability(student)
+    student.save()
 
 def recommend_content(student, num_recommendations=5):
-    user_ability = estimate_user_ability(student)
+    update_student_ability(student)
+    user_ability = student.ability
     
     all_exercises = Exercise.objects.all()
-    logger.debug(f"Total exercises found: {len(all_exercises)}")
-
     ranked_exercises = []
+    
     for exercise in all_exercises:
         try:
             item_parameters = ExerciseParameters.objects.get(exercise=exercise)
-            logger.debug(f"Item parameters found for exercise {exercise.ucid}: {item_parameters}")
         except ExerciseParameters.DoesNotExist:
-            logger.warning(f"No item parameters found for exercise {exercise.ucid}, skipping.")
             continue
         
-        # Calculate the difficulty of the exercise using user_ability
-        exercise_difficulty = user_ability * item_parameters.difficulty
-        logger.debug(f"Exercise {exercise.ucid} difficulty calculated: {exercise_difficulty}")
+        # Parameters from the 3PL model
+        a = item_parameters.discrimination
+        b = item_parameters.difficulty
+        c = item_parameters.guessing
         
-        ranked_exercises.append((exercise, exercise_difficulty))
+        try:
+            # Calculate the probability of a correct response for the user's ability
+            P_correct = c + (1 - c) / (1 + exp(-a * (user_ability - b)))
+        except OverflowError:
+            # Handle overflow error gracefully
+            continue
+        
+        # We might rank exercises by the absolute difference between user's ability and item's difficulty
+        difficulty_diff = abs(user_ability - b)
+        
+        ranked_exercises.append((exercise, difficulty_diff, P_correct))
     
+    # Sort by difficulty difference and select top recommendations
     ranked_exercises.sort(key=lambda x: x[1])
-    logger.debug(f"Ranked exercises: {ranked_exercises}")
-    
     top_recommendations = ranked_exercises[:num_recommendations]
-    logger.debug(f"Top recommendations: {top_recommendations}")
     
-    recommended_exercises = [exercise for exercise, _ in top_recommendations]
+    recommended_exercises = [exercise for exercise, _, _ in top_recommendations]
     
     return recommended_exercises
 
+# Integration in views
+class ExerciseListView(ListView):
+    model = Exercise
+    template_name = 'exercise_list.html'
+    context_object_name = 'exercises'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated and hasattr(self.request.user, 'student'):
+            student = self.request.user.student
+            recommended_exercises = recommend_content(student)
+            #context['recommended_exercises'] = recommend_content(student)
+        else:
+            recommended_exercises = []
+            #context['recommended_exercises'] = []
+        # Translate content_pretty_name for each recommended exercise
+        translator = Translator()
+        for exercise in recommended_exercises:
+            exercise.content_pretty_name_translated = translator.translate(exercise.content_pretty_name, dest='en').text
+        
+        #exercises = Exercise.objects.all()
+        #for exercise in exercises:
+        #     exercise.content_pretty_name_translated = translator.translate(exercise.content_pretty_name, dest='en').text    
+        context['recommended_exercises'] = recommended_exercises    
+        return context
+
+
+class ContentListView(ListView):
+    model = Content
+    template_name = 'content_list.html'
+    context_object_name = 'exercises'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        if self.request.user.is_authenticated and hasattr(self.request.user, 'student'):
+            student = self.request.user.student
+            recommended_exercises = recommend_content(student)
+        else:
+            recommended_exercises = []
+
+        # Translate content_pretty_name for each recommended exercise
+        translator = Translator()
+        for exercise in recommended_exercises:
+            exercise.content_pretty_name_translated = translator.translate(exercise.content_pretty_name, dest='en').text
+
+        context['recommended_exercises'] = recommended_exercises
+        return context
+        
 # Example usage:
 # user = User.objects.get(pk=1)  # Assuming user is retrieved somehow
 # recommended_exercises = recommend_content(user)
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Student, Exercise, StudentResponse, Choice
+
+@login_required
+def show_answers(request, exercise_id):
+    exercise = get_object_or_404(Exercise, ucid=exercise_id)
+    student = get_object_or_404(Student, user=request.user)
+    responses = StudentResponse.objects.filter(student=student, exercise=exercise)
+    
+    answers = []
+    incorrect_answers = 0
+
+    for response in responses:
+        question = response.question
+        student_choice = response.choice
+        correct_choice = Choice.objects.filter(question=question, is_correct=True).first()
+        answers.append({
+            'question': question.text,
+            'student_choice': student_choice.text,
+            'correct_choice': correct_choice.text,
+            'is_correct': response.is_correct
+        })
+
+        if not response.is_correct:
+            incorrect_answers += 1
+    
+    # Retrieve exercise parameters
+    try:
+        exercise_params = ExerciseParameters.objects.get(exercise=exercise)
+        difficulty = exercise_params.difficulty
+        discrimination = exercise_params.discrimination
+        guessing = exercise_params.guessing
+
+        # Calculate percentage of incorrect answers
+        total_responses = responses.count()
+        if total_responses > 0:
+            incorrect_percentage = (incorrect_answers / total_responses) * 100
+        else:
+            incorrect_percentage = 0
+        
+        # Provide feedback based on parameters and performance
+        feedback_message = ""
+        if guessing > 0.5 and incorrect_percentage > 50 and total_responses > 4:
+            feedback_message = "You seem to be guessing too much on this exercise. Consider revising this topic or related topics."
+        elif difficulty > 0.7 and total_responses > 4:  # Example condition, adjust as per your model
+            feedback_message = "This exercise is quite challenging. Focus on understanding the concepts better.try the following content in the list"
+
+        context = {
+            'exercise': exercise,
+            'answers': answers,
+            'feedback_message': feedback_message
+        }
+
+        return render(request, 'show_answers.html', context)
+
+    except ExerciseParameters.DoesNotExist:
+        return HttpResponse("Exercise parameters not found. Please configure them.")

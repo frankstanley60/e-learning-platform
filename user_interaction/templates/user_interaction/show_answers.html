@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exercise Answers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div style="max-width: 800px; margin: auto;">
+        <h1>{{ exercise.translated_content_pretty_name }}</h1>
+        <h2>Answers</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for answer in answers %}
+                    <tr>
+                        <td>{{ answer.question }}</td>
+                        <td>{{ answer.student_choice }}</td>
+                        <td>{{ answer.correct_choice }}</td>
+                        <td>
+                            {% if answer.is_correct %}
+                                <span class="correct">Correct</span>
+                            {% else %}
+                                <span class="incorrect">Incorrect</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if feedback_message %}
+            <div class="feedback">
+                <h3>Feedback</h3>
+                <p>{{ feedback_message }} </p>
+                <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.translated_content_pretty_name }}</a>
+                <p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

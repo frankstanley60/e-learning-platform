@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Next Learning Item</title>
+    <title>Exercise List</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background-color: #f4f4f4;
         }
         .container {
-            max-width: 600px;
+            width: 80%;
             margin: 0 auto;
-            background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
+            background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
@@ -23,39 +22,61 @@
             color: #333;
         }
         ul {
-            list-style: none;
+            list-style-type: none;
             padding: 0;
         }
         li {
-            margin-bottom: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
-        li h3 {
-            display: inline;
-            font-size: 1.1em;
-            color: #555;
+        .recommended {
+            background-color: #e0ffe0;
+            border-color: #b2ffb2;
         }
-        .no-content {
+        .footer {
             text-align: center;
-            color: #999;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #007BFF;
+            color: white;
+            border-top: 1px solid #ddd;
+        }
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .footer a:hover {
+            color: #ffdd57;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Next Learning Item</h1>
+        
+        <h1>Content</h1>
+        {{ user_ability }}
+        
+        <h2>Content to Read Currently</h2>
         <ul>
-            {% if contents %}
-                {% with content=contents.0 %}
-                    <li><h3>Subject:</h3> {{ content.subject }}</li>
-                    <li><h3>Kind:</h3> {{ content.kind }}</li>
-                    <li><h3>Difficulty:</h3> {{ content.difficulty }}</li>
-                    <li><h3>Pretty Content Name:</h3> {{ content.content_pretty_name }}</li>
-                    <li>{{ content.question }}</li>
+            {% if recommended_exercises %}
+                {% with exercise=recommended_exercises.0 %}
+                    <li class="recommended">
+                        <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.content_pretty_name_translated }}</a>
+                    </li>
                 {% endwith %}
             {% else %}
-                <p class="no-content">No content available.</p>
+                <li>No recommended exercises.</li>
             {% endif %}
         </ul>
+
+        <div class="footer">
+            
+        </div>
     </div>
 </body>
 </html>
