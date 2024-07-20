@@ -34,16 +34,25 @@ urlpatterns = [
     path('choices/create/', views.choice_create, name='choice_create'),
     path('choices/<int:pk>/update/', views.choice_update, name='choice_update'),
     path('choices/<int:pk>/delete/', views.choice_delete, name='choice_delete'),
+<<<<<<< HEAD
+    path('exercise/<str:exercise_id>/questions/', views.exercise_questions, name='exercise_questions'),
+
+
+=======
     #path('exercise/<str:exercise_id>/questions/', views.exercise_questions, name='exercise_questions'),
     re_path(r'^exercise/(?P<exercise_id>.+)/questions/$', views.exercise_questions, name='exercise_questions'),
     path('submit_answer/<uuid:question_id>/', views.submit_answer, name='submit_answer'),
     path('user_ability/', views.estimate_user_ability, name='estimate_user_ability'),
+<<<<<<< HEAD
     re_path(r'^exercise/(?P<exercise_id>.+)/answers$', views.show_answers, name='show_answers'),
     #path('exercise/<int:exercise_id>/answers/', views.show_answers, name='show_answers'),
     #path('interaction/exercise/<uuid:exercise_id>/answers/', views.show_answers, name='show_answers'),
     path('', index, name='index'),
     path('gpt4-response/', gpt4_response, name='gpt4_response'),
     
+=======
+>>>>>>> 47786ee06f922c2829814967e6b0ca47cee01808
+>>>>>>> ea19d24fb0863fb2f3a38818a1609df716b7aaa9
 
     
 ]

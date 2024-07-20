@@ -248,6 +248,15 @@ def choice_delete(request, pk):
         return redirect('choice_list')
     return render(request, 'choice_confirm_delete.html', {'choice': choice})
 
+<<<<<<< HEAD
+from django.shortcuts import render, get_object_or_404
+from .models import Exercise, Question
+
+def exercise_questions(request, exercise_id):
+    exercise = get_object_or_404(Exercise, ucid=exercise_id)
+    questions = Question.objects.filter(exercise=exercise)
+    return render(request, 'exercise_questions.html', {'exercise': exercise, 'questions': questions})
+=======
 
 
 logger = logging.getLogger(__name__)
@@ -426,6 +435,7 @@ class ContentListView(ListView):
 # Example usage:
 # user = User.objects.get(pk=1)  # Assuming user is retrieved somehow
 # recommended_exercises = recommend_content(user)
+<<<<<<< HEAD
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Student, Exercise, StudentResponse, Choice
@@ -548,3 +558,6 @@ def gpt4_response(request):
 
 def index(request):
     return render(request, 'index.html')
+=======
+>>>>>>> 47786ee06f922c2829814967e6b0ca47cee01808
+>>>>>>> ea19d24fb0863fb2f3a38818a1609df716b7aaa9

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
+<<<<<<< HEAD
 from math import exp
 from user_interaction.models import StudentResponse, ItemParameter  # Import your Django models
 
@@ -76,3 +77,5 @@ def recommend_content(user, num_recommendations=5):
 # Example usage:
 # user = User.objects.get(pk=1)  # Assuming user is retrieved somehow
 # recommended_exercises = recommend_content(user)
+=======
+>>>>>>> ea19d24fb0863fb2f3a38818a1609df716b7aaa9

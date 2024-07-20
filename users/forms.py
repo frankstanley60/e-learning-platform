@@ -4,8 +4,14 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import UserProfile
 
+<<<<<<< HEAD
 class CustomUserCreationForm (UserCreationForm):
     email = forms.EmailField(required=True)
+=======
+
+class UserRegistrationForm(UserCreationForm):
+    email = forms.EmailField()
+>>>>>>> ea19d24fb0863fb2f3a38818a1609df716b7aaa9
 
     class Meta:
         model = User
@@ -23,8 +29,14 @@ class UserLoginForm(AuthenticationForm):
         fields = ['username', 'password']
 
 class UserProfileForm(forms.ModelForm):
+    
     class Meta:
         model = UserProfile
+<<<<<<< HEAD
         fields = ()  # Leave this empty or only include fields you want in the form
         
 #   UserRegistrationForm             
+=======
+        fields = ['preferences']
+
+>>>>>>> ea19d24fb0863fb2f3a38818a1609df716b7aaa9
