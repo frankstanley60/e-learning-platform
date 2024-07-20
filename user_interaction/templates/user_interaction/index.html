@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask GPT-4</title>
+    <!-- Include CSRF Token -->
+    <meta name="csrf-token" content="{% csrf_token %}">
+</head>
+<body>
+    
+    <h1>Ask GPT-4</h1>
+    <textarea id="prompt" rows="4" cols="50"></textarea><br>
+    <button onclick="askGPT4()">Submit</button>
+    <h2>Response:</h2>
+    <p id="response"></p>
+
+    <script>
+        // Function to get CSRF token from meta tag
+        function getCSRFToken() {
+            const tokenElement = document.querySelector('meta[name="csrf-token"]');
+            return tokenElement ? tokenElement.getAttribute('content') : '';
+        }
+
+        async function askGPT4() {
+            const prompt = document.getElementById('prompt').value;
+            const csrftoken = getCSRFToken(); // Get the CSRF token
+            try {
+                const response = await fetch('/interaction/gpt4-response/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken // Add the CSRF token to the headers
+                    },
+                    body: JSON.stringify({ prompt })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                document.getElementById('response').innerText = data.response || data.error;
+            } catch (error) {
+                document.getElementById('response').innerText = 'An error occurred: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

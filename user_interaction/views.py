@@ -9,7 +9,7 @@ import pytz
 from django.utils import timezone
 from django.http import HttpResponse
 import urllib.parse
-from googletrans import Translator
+#from googletrans import Translator
 
 
 
@@ -390,9 +390,9 @@ class ExerciseListView(ListView):
             recommended_exercises = []
             #context['recommended_exercises'] = []
         # Translate content_pretty_name for each recommended exercise
-        translator = Translator()
-        for exercise in recommended_exercises:
-            exercise.content_pretty_name_translated = translator.translate(exercise.content_pretty_name, dest='en').text
+       # translator = Translator()
+        #for exercise in recommended_exercises:
+            #exercise.content_pretty_name_translated = translator.translate(exercise.content_pretty_name, dest='en').text
         
         #exercises = Exercise.objects.all()
         #for exercise in exercises:
@@ -416,9 +416,9 @@ class ContentListView(ListView):
             recommended_exercises = []
 
         # Translate content_pretty_name for each recommended exercise
-        translator = Translator()
-        for exercise in recommended_exercises:
-            exercise.content_pretty_name_translated = translator.translate(exercise.content_pretty_name, dest='en').text
+       # translator = Translator()
+        #for exercise in recommended_exercises:
+            #exercise.content_pretty_name_translated = translator.translate(exercise.content_pretty_name, dest='en').text
 
         context['recommended_exercises'] = recommended_exercises
         return context
@@ -484,3 +484,67 @@ def show_answers(request, exercise_id):
 
     except ExerciseParameters.DoesNotExist:
         return HttpResponse("Exercise parameters not found. Please configure them.")
+
+import os
+from openai import OpenAI
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
+# Initialize the OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+#sk-proj-IYI1nwTWDH9shGWUt7tpT3BlbkFJjqH3No1PdEIXJMhGMNEO
+# Initialize OpenAI client with your API key
+# List all available models
+# List all available models
+response = client.models.list()
+
+# Handle pagination
+models = []
+while response:
+    models.extend(response.data)  # Use .data to access the items
+    if response.has_next_page():
+        response = response.get_next_page()
+    else:
+        break
+
+# Print the model IDs
+for model in models:
+    print(model.id)
+@csrf_exempt
+def gpt4_response(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            prompt = data.get('prompt')
+
+            if not prompt:
+                return JsonResponse({'error': 'Prompt is required'}, status=400)
+
+            # Use the updated API method
+            response = client.chat.completions.create(
+                messages=[
+                    {"role": "user", "content": prompt}
+                ],
+                model="gpt-3.5-turbo",
+                max_tokens=150,
+                temperature=0.7
+            )
+
+            # Extract the response content
+            response_content = response.choices[0].message['content'].strip()
+
+            return JsonResponse({'response': response_content})
+        except Exception as e:
+            print("Exception:", str(e))
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
+
+
+
+def index(request):
+    return render(request, 'index.html')

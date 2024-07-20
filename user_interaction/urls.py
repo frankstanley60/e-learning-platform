@@ -5,6 +5,9 @@ from .views import StudentResponseListView
 from .views import StudentListView, StudentCreateView, StudentUpdateView, StudentDeleteView
 from . import views
 from django.urls import re_path
+from .views import gpt4_response
+from .views import index, gpt4_response  # Import the index view
+
 
 
 
@@ -38,6 +41,8 @@ urlpatterns = [
     re_path(r'^exercise/(?P<exercise_id>.+)/answers$', views.show_answers, name='show_answers'),
     #path('exercise/<int:exercise_id>/answers/', views.show_answers, name='show_answers'),
     #path('interaction/exercise/<uuid:exercise_id>/answers/', views.show_answers, name='show_answers'),
+    path('', index, name='index'),
+    path('gpt4-response/', gpt4_response, name='gpt4_response'),
     
 
     

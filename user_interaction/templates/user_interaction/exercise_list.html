@@ -65,7 +65,7 @@
         <ul>
             {% for exercise in recommended_exercises %}
                 <li class="recommended">
-                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.content_pretty_name_translated }}</a>
+                    <a href="{% url 'exercise_questions' exercise.ucid|urlencode %}">{{ exercise.translated_content_pretty_name}}</a>
                 </li>
             {% empty %}
                 <li>No recommended contents available</li>
