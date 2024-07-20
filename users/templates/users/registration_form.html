@@ -55,15 +55,33 @@
         button:hover {
             background-color: #45a049;
         }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>User Registration</h2>
-        <form method="post">
+        <form method="post" action="{% url 'register' %}">
             {% csrf_token %}
-            {{ registration_form.as_p }}
-            {{ profile_form.as_p }}
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ registration_form.username.value }}">
+            <div class="error">{{ registration_form.username.errors }}</div>
+            
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="{{ registration_form.email.value }}">
+            <div class="error">{{ registration_form.email.errors }}</div>
+            
+            <label for="password1">Password</label>
+            <input type="password" id="password1" name="password1">
+            <div class="error">{{ registration_form.password1.errors }}</div>
+            
+            <label for="password2">Confirm Password</label>
+            <input type="password" id="password2" name="password2">
+            <div class="error">{{ registration_form.password2.errors }}</div>
+            
             <button type="submit">Register</button>
         </form>
     </div>

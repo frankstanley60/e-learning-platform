@@ -3,7 +3,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login
-from .forms import UserRegistrationForm, UserProfileForm
+from .forms import CustomUserCreationForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from .models import UserProfile
 from user_interaction.models import Student
@@ -12,25 +12,28 @@ from django.urls import reverse
 
 
 
-def register_view(request):
+def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
-        if form.is_valid() and profile_form.is_valid():
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
             user = form.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
+            # Create a UserProfile instance and set default values for the extra fields
+            profile = UserProfile.objects.create(
+                user=user,
+                preferences="Default preferences",  # Set default or blank
+                learning_goals="Default learning goals",  # Set default or blank
+                progress_data={}  # Set default or blank
+            )
             student = Student.objects.create(user=user)
-            profile.save()
             
-            login(request, user)
-            print("User profile created and associated with user:",profile)
-            return redirect(reverse('home'))  # Redirect to home page after registration
+            print("User profile created and associated with user:", profile)
+            return redirect(reverse('login'))  # Redirect to login page after registration
     else:
-        form = UserRegistrationForm()
-        profile_form = UserProfileForm()
-    return render(request, 'users/registration_form.html', {'registration_form':form, 'profile_form': profile_form})
-
+        form = CustomUserCreationForm()
+    
+    return render(request, 'users/registration_form.html', {
+        'registration_form': form,
+    })
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)

@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% load static %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,6 +10,8 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+            background-image: url("{% static 'img/4936380.jpg' %}");
+            
         }
         .header {
             background-color: #4CAF50;
@@ -37,7 +40,8 @@
         }
     </style>
 </head>
-<body>
+<body background="C:\Users\frank\AppData\Local\Temp\cc18de7a-8b57-4b34-831c-5287d7a06431_landing-page-online-classes-with-child.zip.431\4936380.jpg">
+
     <div class="header">
         <h1>Welcome to MathMinds</h1>
     </div>
@@ -45,11 +49,13 @@
         
         
         <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'register_view' %}">Register</a>
+        <a href="{% url 'register' %}">Register</a>
     </div>
     <div class="content">
         <h2>About Our Platform</h2>
         <p>This platform will adapt your learning behaviour!</p>
+
+        
     </div>
 </body>
 </html>
